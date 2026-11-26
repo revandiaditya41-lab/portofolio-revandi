@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kasir Supermarket</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#eef2f7;
+    color:#333;
+}
+
+/* HEADER */
+
+.header{
+    background:linear-gradient(135deg,#0d6efd,#0047ab);
+    color:white;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header h1{
+    font-size:25px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.9;
+}
+
+/* CONTAINER */
+
+.container{
+    max-width:1200px;
+    margin:25px auto;
+    padding:0 15px;
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:20px;
+}
+
+/* CARD */
+
+.card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.card h2{
+    margin-bottom:20px;
+    color:#1f2937;
+}
+
+/* FORM */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr auto;
+    gap:10px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#0d6efd;
+    box-shadow:0 0 0 2px rgba(13,110,253,.1);
+}
+
+button{
+    border:none;
+    border-radius:8px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.btn-primary{
+    background:#0d6efd;
+    color:white;
+}
+
+.btn-primary:hover{
+    background:#0056d6;
+}
+
+/* SEARCH */
+
+.search{
+    margin:20px 0;
+}
+
+/* TABLE */
+
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+th,td{
+    padding:12px 10px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* BUTTON JUMLAH */
+
+.qty{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+}
+
+.qty button{
+    width:28px;
+    height:28px;
+    padding:0;
+    background:#e9ecef;
+    color:#333;
+}
+
+.qty span{
+    min-width:25px;
+}
+
+/* DELETE */
+
+.delete{
+    background:#dc3545;
+    color:white;
+    padding:7px 10px;
+}
+
+.delete:hover{
+    background:#b02a37;
+}
+
+/* TOTAL */
+
+.summary{
+    margin-top:20px;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+}
+
+.summary-row.total{
+    border-top:2px solid #eee;
+    margin-top:10px;
+    padding-top:15px;
+    font-size:22px;
+    font-weight:bold;
+    color:#0d6efd;
+}
+
+/* DISKON */
+
+.discount{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.discount input{
+    flex:1;
+}
+
+/* PAYMENT */
+
+.payment{
+    margin-top:20px;
+}
+
+.payment label{
+    display:block;
+    margin-bottom:7px;
+    font-weight:bold;
+}
+
+.btn-pay{
+    width:100%;
+    margin-top:15px;
+    background:#198754;
+    color:white;
+    font-size:16px;
+}
+
+.btn-pay:hover{
+    background:#146c43;
+}
+
+.btn-reset{
+    width:100%;
+    margin-top:10px;
+    background:#6c757d;
+    color:white;
+}
+
+/* STRUK */
+
+.receipt{
+    display:none;
+    margin-top:20px;
+    border-top:2px dashed #aaa;
+    padding-top:20px;
+}
+
+.receipt h3{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.receipt-item{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin:6px 0;
+}
+
+.receipt-total{
+    border-top:1px dashed #aaa;
+    margin-top:10px;
+    padding-top:10px;
+    font-weight:bold;
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#999;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:800px){
+
+    .header{
+        padding:15px 20px;
+    }
+
+    .header h1{
+        font-size:19px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+<div>
+<h1>🛒 SuperKasir</h1>
+<p>Sistem Kasir Supermarket</p>
+</div>
+
+<div id="tanggal"></div>
+
+</header>
+
+
+<div class="container">
+
+<div class="grid">
+
+<!-- ================= LEFT ================= -->
+
+<div class="card">
+
+<h2>📦 Daftar Belanja</h2>
+
+<form id="formKasir">
+
+<div class="form-grid">
+
+<input
+type="text"
+id="nama"
+placeholder="Nama Barang"
+required
+>
+
+<input
+type="number"
+id="harga"
+placeholder="Harga"
+min="1"
+required
+>
+
+<input
+type="number"
+id="jumlah"
+placeholder="Jumlah"
+min="1"
+value="1"
+required
+>
+
+<button
+class="btn-primary"
+type="submit">
++ Tambah
+</button>
+
+</div>
+
+</form>
+
+
+<!-- SEARCH -->
+
+<div class="search">
+
+<input
+type="text"
+id="search"
+placeholder="🔎 Cari barang..."
+onkeyup="cariBarang()"
+>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>No</th>
+<th>Barang</th>
+<th>Harga</th>
+<th>Jumlah</th>
+<th>Subtotal</th>
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+<tbody id="dataBarang">
+
+</tbody>
+
+</table>
+
+</div>
+
+<div
+class="empty"
+id="empty">
+Belum ada barang di keranjang.
+</div>
+
+</div>
+
+
+<!-- ================= RIGHT ================= -->
+
+<div class="card">
+
+<h2>💰 Pembayaran</h2>
+
+<div class="summary">
+
+<div class="summary-row">
+
+<span>Subtotal</span>
+
+<strong>
+Rp <span id="subtotal">0</span>
+</strong>
+
+</div>
+
+
+<div class="summary-row">
+
+<span>Diskon</span>
+
+<strong>
+Rp <span id="diskon">0</span>
+</strong>
+
+</div>
+
+
+<div class="summary-row total">
+
+<span>Total</span>
+
+<span>
+Rp <span id="total">0</span>
+</span>
+
+</div>
+
+</div>
+
+
+<!-- DISCOUNT -->
+
+<div class="discount">
+
+<input
+type="number"
+id="diskonInput"
+placeholder="Diskon (%)"
+min="0"
+max="100"
+oninput="hitungTotal()"
+>
+
+</div>
+
+
+<!-- PAYMENT -->
+
+<div class="payment">
+
+<label>Uang Pembayaran</label>
+
+<input
+type="number"
+id="uang"
+placeholder="Masukkan jumlah uang"
+oninput="hitungKembalian()"
+>
+
+<div class="summary-row">
+
+<span>Kembalian</span>
+
+<strong>
+Rp <span id="kembalian">0</span>
+</strong>
+
+</div>
+
+
+<button
+class="btn-pay"
+onclick="bayar()">
+
+💳 BAYAR SEKARANG
+
+</button>
+
+
+<button
+class="btn-reset"
+onclick="resetTransaksi()">
+
+🔄 Transaksi Baru
+
+</button>
+
+</div>
+
+
+<!-- RECEIPT -->
+
+<div
+class="receipt"
+id="receipt">
+
+<h3>🧾 STRUK PEMBAYARAN</h3>
+
+<div id="receiptItems"></div>
+
+<div class="receipt-total">
+
+<div class="receipt-item">
+
+<span>Total</span>
+
+<span>
+Rp <span id="receiptTotal">0</span>
+</span>
+
+</div>
+
+
+<div class="receipt-item">
+
+<span>Bayar</span>
+
+<span>
+Rp <span id="receiptBayar">0</span>
+</span>
+
+</div>
+
+
+<div class="receipt-item">
+
+<span>Kembali</span>
+
+<span>
+Rp <span id="receiptKembali">0</span>
+</span>
+
+</div>
+
+</div>
+
+<p
+style="
+text-align:center;
+margin-top:15px;
+font-size:12px;
+">
+
+Terima kasih telah berbelanja ❤️
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+let keranjang =
+JSON.parse(localStorage.getItem("keranjang")) || [];
+
+
+/* =========================
+   FORMAT RUPIAH
+========================= */
+
+function rupiah(angka){
+
+return new Intl.NumberFormat(
+'id-ID'
+).format(angka);
+
+}
+
+
+/* =========================
+   TAMPILKAN BARANG
+========================= */
+
+function tampilkanBarang(){
+
+let tabel =
+document.getElementById("dataBarang");
+
+tabel.innerHTML="";
+
+let empty =
+document.getElementById("empty");
+
+if(keranjang.length === 0){
+
+empty.style.display="block";
+
+}else{
+
+empty.style.display="none";
+
+}
+
+
+keranjang.forEach((item,index)=>{
+
+let subtotal =
+item.harga * item.jumlah;
+
+tabel.innerHTML += `
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${item.nama}</td>
+
+<td>Rp ${rupiah(item.harga)}</td>
+
+<td>
+
+<div class="qty">
+
+<button
+onclick="kurang(${index})">
+-
+</button>
+
+<span>${item.jumlah}</span>
+
+<button
+onclick="tambah(${index})">
++
+</button>
+
+</div>
+
+</td>
+
+<td>
+Rp ${rupiah(subtotal)}
+</td>
+
+<td>
+
+<button
+class="delete"
+onclick="hapus(${index})">
+
+🗑
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+hitungTotal();
+
+simpanData();
+
+}
+
+
+/* =========================
+   TAMBAH BARANG
+========================= */
+
+document
+.getElementById("formKasir")
+.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+let nama =
+document.getElementById("nama").value.trim();
+
+let harga =
+parseInt(
+document.getElementById("harga").value
+);
+
+let jumlah =
+parseInt(
+document.getElementById("jumlah").value
+);
+
+
+if(!nama || harga <= 0 || jumlah <= 0){
+
+alert("Data barang tidak valid!");
+
+return;
+
+}
+
+
+/* Cek barang yang sama */
+
+let index =
+keranjang.findIndex(
+item =>
+item.nama.toLowerCase()
+=== nama.toLowerCase()
+&& item.harga === harga
+);
+
+
+if(index !== -1){
+
+keranjang[index].jumlah += jumlah;
+
+}else{
+
+keranjang.push({
+
+nama:nama,
+
+harga:harga,
+
+jumlah:jumlah
+
+});
+
+}
+
+
+this.reset();
+
+document.getElementById("jumlah").value=1;
+
+tampilkanBarang();
+
+});
+
+
+/* =========================
+   TAMBAH JUMLAH
+========================= */
+
+function tambah(index){
+
+keranjang[index].jumlah++;
+
+tampilkanBarang();
+
+}
+
+
+/* =========================
+   KURANG JUMLAH
+========================= */
+
+function kurang(index){
+
+if(keranjang[index].jumlah > 1){
+
+keranjang[index].jumlah--;
+
+}else{
+
+if(confirm("Hapus barang ini?")){
+
+keranjang.splice(index,1);
+
+}
+
+}
+
+tampilkanBarang();
+
+}
+
+
+/* =========================
+   HAPUS BARANG
+========================= */
+
+function hapus(index){
+
+if(confirm(
+"Yakin ingin menghapus barang ini?"
+)){
+
+keranjang.splice(index,1);
+
+tampilkanBarang();
+
+}
+
+}
+
+
+/* =========================
+   HITUNG TOTAL
+========================= */
+
+function hitungTotal(){
+
+let subtotal=0;
+
+keranjang.forEach(item=>{
+
+subtotal +=
+item.harga * item.jumlah;
+
+});
+
+
+let persen =
+parseFloat(
+document.getElementById("diskonInput").value
+) || 0;
+
+
+if(persen > 100){
+
+persen=100;
+
+document.getElementById(
+"diskonInput"
+).value=100;
+
+}
+
+
+let diskon =
+subtotal * persen / 100;
+
+let total =
+subtotal - diskon;
+
+
+document.getElementById(
+"subtotal"
+).innerText =
+rupiah(subtotal);
+
+
+document.getElementById(
+"diskon"
+).innerText =
+rupiah(diskon);
+
+
+document.getElementById(
+"total"
+).innerText =
+rupiah(total);
+
+
+hitungKembalian();
+
+}
+
+
+/* =========================
+   KEMBALIAN
+========================= */
+
+function hitungKembalian(){
+
+let total =
+hitungNilaiTotal();
+
+let uang =
+parseInt(
+document.getElementById("uang").value
+) || 0;
+
+
+let kembali =
+uang-total;
+
+
+if(kembali < 0){
+
+kembali=0;
+
+}
+
+
+document.getElementById(
+"kembalian"
+).innerText =
+rupiah(kembali);
+
+}
+
+
+/* =========================
+   AMBIL TOTAL
+========================= */
+
+function hitungNilaiTotal(){
+
+let subtotal=0;
+
+keranjang.forEach(item=>{
+
+subtotal +=
+item.harga * item.jumlah;
+
+});
+
+
+let persen =
+parseFloat(
+document.getElementById("diskonInput").value
+) || 0;
+
+
+return subtotal -
+(subtotal * persen / 100);
+
+}
+
+
+/* =========================
+   BAYAR
+========================= */
+
+function bayar(){
+
+if(keranjang.length === 0){
+
+alert(
+"Keranjang masih kosong!"
+);
+
+return;
+
+}
+
+
+let total =
+hitungNilaiTotal();
+
+let uang =
+parseInt(
+document.getElementById("uang").value
+);
+
+
+if(!uang || uang <= 0){
+
+alert(
+"Masukkan uang pembayaran!"
+);
+
+return;
+
+}
+
+
+if(uang < total){
+
+alert(
+
+"Uang pembayaran kurang Rp "
++
+rupiah(total-uang)
+
+);
+
+return;
+
+}
+
+
+let kembali =
+uang-total;
+
+
+/* STRUK */
+
+let receiptItems =
+document.getElementById(
+"receiptItems"
+);
+
+receiptItems.innerHTML="";
+
+
+keranjang.forEach(item=>{
+
+let subtotal =
+item.harga * item.jumlah;
+
+
+receiptItems.innerHTML += `
+
+<div class="receipt-item">
+
+<span>
+${item.nama}
+x${item.jumlah}
+</span>
+
+<span>
+Rp ${rupiah(subtotal)}
+</span>
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById(
+"receiptTotal"
+).innerText =
+rupiah(total);
+
+
+document.getElementById(
+"receiptBayar"
+).innerText =
+rupiah(uang);
+
+
+document.getElementById(
+"receiptKembali"
+).innerText =
+rupiah(kembali);
+
+
+document.getElementById(
+"receipt"
+).style.display="block";
+
+
+alert(
+
+"Pembayaran berhasil!\n\n"
++
+"Total : Rp "
++
+rupiah(total)
++
+"\nBayar : Rp "
++
+rupiah(uang)
++
+"\nKembali : Rp "
++
+rupiah(kembali)
+
+);
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetTransaksi(){
+
+if(
+keranjang.length > 0 &&
+!confirm(
+"Mulai transaksi baru?"
+)
+){
+
+return;
+
+}
+
+
+keranjang=[];
+
+localStorage.removeItem(
+"keranjang"
+);
+
+document.getElementById(
+"uang"
+).value="";
+
+document.getElementById(
+"diskonInput"
+).value="";
+
+document.getElementById(
+"receipt"
+).style.display="none";
+
+
+tampilkanBarang();
+
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function cariBarang(){
+
+let keyword =
+document.getElementById(
+"search"
+).value.toLowerCase();
+
+
+let rows =
+document.querySelectorAll(
+"#dataBarang tr"
+);
+
+
+rows.forEach(row=>{
+
+let nama =
+row.children[1]
+.innerText
+.toLowerCase();
+
+
+if(
+nama.includes(keyword)
+){
+
+row.style.display="";
+
+}else{
+
+row.style.display="none";
+
+}
+
+});
+
+}
+
+
+/* =========================
+   LOCAL STORAGE
+========================= */
+
+function simpanData(){
+
+localStorage.setItem(
+"keranjang",
+JSON.stringify(
+keranjang
+)
+);
+
+}
+
+
+/* =========================
+   TANGGAL
+========================= */
+
+function tampilkanTanggal(){
+
+let sekarang =
+new Date();
+
+
+document.getElementById(
+"tanggal"
+).innerText =
+sekarang.toLocaleDateString(
+"id-ID",
+{
+weekday:"long",
+year:"numeric",
+month:"long",
+day:"numeric"
+}
+);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+tampilkanTanggal();
+
+tampilkanBarang();
+
+</script>
+
+</body>
+</html>
